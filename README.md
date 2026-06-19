@@ -87,9 +87,9 @@ pip install meeko plip
 #### 3. Install AutoDock Vina
 
 ```bash
-curl -LO https://github.com/ccsb-scripps/AutoDock-Vina/releases/download/v1.2.7/vina_1.2.7_mac_arm64
-chmod +x vina_1.2.7_mac_arm64
-sudo mv vina_1.2.7_mac_arm64 /usr/local/bin/vina
+curl -LO https://github.com/ccsb-scripps/AutoDock-Vina/releases/download/v1.2.7/vina_1.2.7_mac_aarch64
+chmod +x vina_1.2.7_mac_aarch64
+sudo mv vina_1.2.7_mac_aarch64 /usr/local/bin/vina
 xattr -dr com.apple.quarantine /usr/local/bin/vina
 ```
 
