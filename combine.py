@@ -240,9 +240,8 @@ def run_plip_analysis(complex_pdb, plip_root):
     os.makedirs(output_dir, exist_ok=True)
 
     commands = [
-        ["plip", "-f", complex_pdb, "-o", output_dir, "-x", "-t", "-p"],
+        ["plip", "-f", complex_pdb, "-o", output_dir, "-x", "-t", "-y"],
         ["plip", "-f", complex_pdb, "-o", output_dir, "-x", "-t", "--pymol"],
-        ["plip", "-f", complex_pdb, "-o", output_dir, "-x", "-t"],
     ]
 
     last_error = None
@@ -252,11 +251,19 @@ def run_plip_analysis(complex_pdb, plip_root):
             pse_files = [f for f in os.listdir(output_dir) if f.endswith(".pse")]
             if pse_files:
                 print(f"  ✓ PLIP: {output_dir} ({len(pse_files)} pse)")
-            else:
-                print(f"  ✓ PLIP: {output_dir}（未检测到pse，已输出报告）")
-            return True
+                return True
+
+            last_error = "PLIP运行成功但未生成.pse文件"
         except subprocess.CalledProcessError as exc:
             last_error = exc.stderr.strip() or exc.stdout.strip() or str(exc)
+
+    report_command = ["plip", "-f", complex_pdb, "-o", output_dir, "-x", "-t", "-p"]
+    try:
+        subprocess.run(report_command, check=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(f"  ! PLIP已输出报告/图片，但未生成pse: {output_dir}。原因：{last_error}")
+        return False
+    except subprocess.CalledProcessError as exc:
+        last_error = exc.stderr.strip() or exc.stdout.strip() or str(exc)
 
     print(f"  ✗ PLIP failed for {os.path.basename(complex_pdb)}: {last_error}")
     return False
